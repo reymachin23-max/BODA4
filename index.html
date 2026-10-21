@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestra Boda Simbólica | Rey Arturo & Leslie Lisbeth</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Tone.js para efectos de sonido suaves y románticos -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- html2canvas para descargar el certificado como imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ivory: '#FDFBF7',
+                        blush: '#FCEEF2',
+                        roseDust: '#E8C5D0',
+                        champagne: '#D4AF37',
+                        champagneLight: '#F3E5AB',
+                        burgundy: '#6E1E2A',
+                        burgundyLight: '#8C2D3C',
+                        charcoal: '#2C2224'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        script: ['"Great Vibes"', 'cursive'],
+                        sans: ['"Montserrat"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FDFBF7;
+            color: #2C2224;
+            overflow-x: hidden;
+        }
+
+        /* Fondo romántico con textura sutil y degradado */
+        .bg-romantic {
+            background: radial-gradient(circle at 50% 20%, #FFFDFB 0%, #FCEEF2 65%, #F5E1E7 100%);
+        }
+
+        /* Bordes ornamentales para el certificado */
+        .certificate-border {
+            border: 2px solid #D4AF37;
+            outline: 1px solid #D4AF37;
+            outline-offset: -8px;
+            background: linear-gradient(135deg, #FFFDF9 0%, #FDFBF7 50%, #FAF3E8 100%);
+            box-shadow: 0 20px 50px rgba(110, 30, 42, 0.12), inset 0 0 40px rgba(212, 175, 55, 0.15);
+        }
+
+        /* Animación de brillo dorado */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .btn-gold-shimmer {
+            background: linear-gradient(90deg, #6E1E2A 0%, #8C2D3C 40%, #D4AF37 50%, #8C2D3C 60%, #6E1E2A 100%);
+            background-size: 200% auto;
+            animation: shimmer 5s infinite linear;
+        }
+
+        /* Animación de flotación para anillos */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+
+        /* Animación de unión de anillos */
+        @keyframes ringLeftJoin {
+            0% { transform: translateX(-45px) rotate(-15deg) scale(0.9); opacity: 0.5; }
+            100% { transform: translateX(12px) rotate(-8deg) scale(1.08); opacity: 1; }
+        }
+        @keyframes ringRightJoin {
+            0% { transform: translateX(45px) rotate(15deg) scale(0.9); opacity: 0.5; }
+            100% { transform: translateX(-12px) rotate(8deg) scale(1.08); opacity: 1; }
+        }
+
+        .ring-left-united {
+            animation: ringLeftJoin 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .ring-right-united {
+            animation: ringRightJoin 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Transición suave entre pasos */
+        .step-section {
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+
+        /* Estilo de canvas para evitar scroll en móvil al firmar */
+        canvas.signature-pad {
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        /* Sello de cera/dorado */
+        .wax-seal {
+            background: radial-gradient(circle at 30% 30%, #F3E5AB, #D4AF37 60%, #997A15 100%);
+            box-shadow: 0 4px 15px rgba(153, 122, 21, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Reglas para impresión limpia del certificado */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #certificate-wrapper, #certificate-wrapper * {
+                visibility: visible;
+            }
+            #certificate-wrapper {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 15px !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-romantic min-h-screen font-sans antialiased selection:bg-roseDust selection:text-burgundy relative">
+
+    <!-- Lienzo de fondo para pétalos y destellos dorados -->
+    <canvas id="petals-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Lienzo superior para confeti de celebración -->
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <!-- Barra superior de navegación y progreso -->
+    <header class="sticky top-0 z-30 backdrop-blur-md bg-ivory/90 border-b border-champagne/30 px-4 py-2.5 no-print shadow-sm">
+        <div class="max-w-5xl mx-auto flex flex-col gap-2">
+            <!-- Fila 1: Identidad en Tiempo Real, Sala y Botón de Latido -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-champagne/20 text-xs">
+                <!-- Estado de conexión y Sala -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <div id="sync-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-300 text-amber-800 font-medium">
+                        <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        <span id="sync-status-text">Conectando al altar...</span>
+                    </div>
+
+                    <div class="inline-flex items-center gap-1 bg-white/90 border border-champagne/40 rounded-full px-2.5 py-0.5">
+                        <span class="text-[11px] text-charcoal/60">Sala:</span>
+                        <input id="room-code-input" type="text" value="REY-LESLIE-AMOR" onchange="changeRoomCode(this.value)"
+                            class="w-32 sm:w-36 bg-transparent font-mono font-bold text-burgundy text-[11px] focus:outline-none uppercase" title="Código de sala compartida">
+                        <button type="button" onclick="copyRoomCode()" class="text-burgundy hover:text-champagne transition px-1" title="Copiar código de sala">
+                            📋
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Selector "¿Quién eres?" + Botón de Beso/Latido en vivo -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="inline-flex rounded-full bg-blush p-0.5 border border-champagne/40">
+                        <button type="button" id="role-btn-groom" onclick="selectRole('groom')"
+                            class="px-2.5 py-1 rounded-full text-[11px] font-semibold transition bg-burgundy text-white shadow-sm">
+                            Soy Rey Arturo 🤵🏻
+                        </button>
+                        <button type="button" id="role-btn-bride" onclick="selectRole('bride')"
+                            class="px-2.5 py-1 rounded-full text-[11px] font-semibold transition text-burgundy hover:bg-white/60">
+                            Soy Leslie Lisbeth 👰🏻‍♀️
+                        </button>
+                    </div>
+
+                    <button type="button" onclick="sendRealtimeHeartbeat()"
+                        class="px-3 py-1 rounded-full bg-gradient-to-r from-burgundy to-burgundyLight text-white font-semibold text-[11px] shadow-sm hover:shadow-md transform active:scale-95 transition flex items-center gap-1 border border-champagne/50">
+                        <span>💌</span>
+                        <span>Enviar beso / latido</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Fila 2: Monograma, Pasos y Sonido -->
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <!-- Monograma y nombres cortos -->
+                <div class="flex items-center gap-2.5 cursor-pointer" onclick="goToStep(1, true)">
+                    <div class="w-8 h-8 rounded-full bg-burgundy text-champagneLight font-serif font-bold flex items-center justify-center text-xs border border-champagne shadow-sm">
+                        R&L
+                    </div>
+                    <div>
+                        <span class="font-serif italic text-base sm:text-lg text-burgundy font-semibold tracking-wide" id="nav-couple-names">Rey Arturo & Leslie Lisbeth</span>
+                        <span id="partner-online-badge" class="ml-1.5 text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 hidden sm:inline-block">
+                            Sincronización activa ✨
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Indicador de pasos interactivo -->
+                <nav class="hidden md:flex items-center gap-1 lg:gap-1.5 text-xs font-medium">
+                    <button onclick="goToStep(1, true)" id="step-tab-1" class="px-2.5 py-1 rounded-full transition-all flex items-center gap-1 bg-burgundy text-white shadow-sm">
+                        <span>1.</span> <span>Altar</span>
+                    </button>
+                    <span class="text-champagne">──</span>
+                    <button onclick="goToStep(2, true)" id="step-tab-2" class="px-2.5 py-1 rounded-full transition-all flex items-center gap-1 text-charcoal/70 hover:bg-blush">
+                        <span>2.</span> <span>Promesas y Votos</span>
+                    </button>
+                    <span class="text-champagne">──</span>
+                    <button onclick="goToStep(3, true)" id="step-tab-3" class="px-2.5 py-1 rounded-full transition-all flex items-center gap-1 text-charcoal/70 hover:bg-blush">
+                        <span>3.</span> <span>Sí, Acepto</span>
+                    </button>
+                    <span class="text-champagne">──</span>
+                    <button onclick="goToStep(4, true)" id="step-tab-4" class="px-2.5 py-1 rounded-full transition-all flex items-center gap-1 text-charcoal/70 hover:bg-blush">
+                        <span>4.</span> <span>Firmas</span>
+                    </button>
+                    <span class="text-champagne">──</span>
+                    <button onclick="goToStep(5, true)" id="step-tab-5" class="px-2.5 py-1 rounded-full transition-all flex items-center gap-1 text-charcoal/70 hover:bg-blush">
+                        <span>5.</span> <span>Certificado</span>
+                    </button>
+                </nav>
+
+                <!-- Controles de Audio y Sincronización de Paso -->
+                <div class="flex items-center gap-1.5">
+                    <label class="hidden sm:inline-flex items-center gap-1 text-[11px] text-charcoal/75 cursor-pointer bg-white/70 px-2.5 py-1 rounded-full border border-champagne/30" title="Cuando cambies de pestaña, lleva a tu pareja contigo automáticamente">
+                        <input type="checkbox" id="follow-step-toggle" checked class="accent-burgundy w-3.5 h-3.5 rounded">
+                        <span>Avanzar juntos</span>
+                    </label>
+                    <button id="sound-toggle-btn" onclick="toggleAudio()" class="px-2.5 py-1 rounded-full border border-champagne/50 bg-white/80 hover:bg-blush text-burgundy text-xs font-medium flex items-center gap-1 transition shadow-sm" title="Activar/Desactivar sonidos románticos">
+                        <span id="sound-icon">🔔</span>
+                        <span class="hidden sm:inline" id="sound-label">Sonido</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Barra de progreso móvil -->
+        <div class="md:hidden mt-2 flex items-center justify-between text-[11px] text-burgundy font-medium px-1">
+            <span id="mobile-step-text">Paso 1 de 5: Altar Virtual</span>
+            <div class="w-32 h-1.5 bg-roseDust/40 rounded-full overflow-hidden">
+                <div id="mobile-progress-bar" class="h-full bg-burgundy transition-all duration-300" style="width: 20%"></div>
+            </div>
+        </div>
+        <!-- Sub-barra informativa de ID de sesión para transparencia multijugador -->
+        <div class="max-w-5xl mx-auto pt-1 flex items-center justify-between text-[10px] text-charcoal/50 px-1">
+            <span>Conectado como: <strong id="active-role-label" class="text-burgundy">Rey Arturo 🤵🏻</strong></span>
+            <span class="truncate max-w-[220px] sm:max-w-xs" title="ID de sesión en la nube">ID Sesión: <span id="user-uid-display">Conectando...</span></span>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="relative z-10 max-w-4xl mx-auto px-4 py-8 md:py-12">
+
+        <!-- ==========================================
+             PASO 1: BIENVENIDA / ALTAR VIRTUAL
+             ========================================== -->
+        <section id="step-1" class="step-section">
+            <div class="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 md:p-14 shadow-xl border border-champagne/40 text-center relative overflow-hidden">
+                
+                <!-- Esquinas ornamentales SVG -->
+                <svg class="w-16 h-16 text-champagne/60 absolute top-3 left-3 pointer-events-none" viewBox="0 0 100 100" fill="none">
+                    <path d="M5 95V25C5 13.9543 13.9543 5 25 5H95" stroke="currentColor" stroke-width="2"/>
+                    <path d="M15 80V30C15 21.7157 21.7157 15 30 15H80" stroke="currentColor" stroke-width="1"/>
+                    <circle cx="25" cy="25" r="4" fill="currentColor"/>
+                </svg>
+                <svg class="w-16 h-16 text-champagne/60 absolute top-3 right-3 pointer-events-none transform scale-x-[-1]" viewBox="0 0 100 100" fill="none">
+                    <path d="M5 95V25C5 13.9543 13.9543 5 25 5H95" stroke="currentColor" stroke-width="2"/>
+                    <path d="M15 80V30C15 21.7157 21.7157 15 30 15H80" stroke="currentColor" stroke-width="1"/>
+                    <circle cx="25" cy="25" r="4" fill="currentColor"/>
+                </svg>
+                <svg class="w-16 h-16 text-champagne/60 absolute bottom-3 left-3 pointer-events-none transform scale-y-[-1]" viewBox="0 0 100 100" fill="none">
+                    <path d="M5 95V25C5 13.9543 13.9543 5 25 5H95" stroke="currentColor" stroke-width="2"/>
+                    <path d="M15 80V30C15 21.7157 21.7157 15 30 15H80" stroke="currentColor" stroke-width="1"/>
+                    <circle cx="25" cy="25" r="4" fill="currentColor"/>
+                </svg>
+                <svg class="w-16 h-16 text-champagne/60 absolute bottom-3 right-3 pointer-events-none transform scale-[-1]" viewBox="0 0 100 100" fill="none">
+                    <path d="M5 95V25C5 13.9543 13.9543 5 25 5H95" stroke="currentColor" stroke-width="2"/>
+                    <path d="M15 80V30C15 21.7157 21.7157 15 30 15H80" stroke="currentColor" stroke-width="1"/>
+                    <circle cx="25" cy="25" r="4" fill="currentColor"/>
+                </svg>
+
+                <!-- Encabezado de Altar -->
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blush border border-champagne/40 text-burgundy text-xs uppercase tracking-widest font-semibold mb-6">
+                    <span>✨ Ceremonia de Unión & Compromiso Simbólico ✨</span>
+                </div>
+
+                <p class="font-serif italic text-xl sm:text-2xl text-charcoal/80 mb-3">
+                    "Dos almas que se encuentran, dos corazones que se eligen cada día"
+                </p>
+
+                <!-- Ilustración de Anillos y Corazón -->
+                <div class="my-6 flex justify-center">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-b from-blush to-ivory border border-champagne/50 flex items-center justify-center shadow-inner animate-float">
+                        <svg class="w-14 h-14 text-champagne" viewBox="0 0 64 64" fill="none">
+                            <circle cx="24" cy="36" r="14" stroke="#D4AF37" stroke-width="3.5"/>
+                            <circle cx="40" cy="36" r="14" stroke="#C59B27" stroke-width="3.5"/>
+                            <path d="M32 18L27 12L32 7L37 12L32 18Z" fill="#E8C5D0" stroke="#D4AF37" stroke-width="1.5"/>
+                            <path d="M32 16C32 16 26 11 23 13C20 15 22 20 32 25C42 20 44 15 41 13C38 11 32 16 32 16Z" fill="#6E1E2A" opacity="0.85"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Nombres Principales -->
+                <div class="my-6 space-y-2">
+                    <h1 class="font-serif text-3xl sm:text-5xl md:text-6xl font-bold text-burgundy tracking-tight leading-tight" id="hero-groom-name">
+                        Rey Arturo García Soto
+                    </h1>
+                    <div class="font-script text-3xl sm:text-4xl text-champagne my-1">&amp;</div>
+                    <h1 class="font-serif text-3xl sm:text-5xl md:text-6xl font-bold text-burgundy tracking-tight leading-tight" id="hero-bride-name">
+                        Leslie Lisbeth Galicia Huerta
+                    </h1>
+                </div>
+
+                <p class="max-w-xl mx-auto text-sm sm:text-base text-charcoal/75 leading-relaxed mb-8">
+                    Hoy nos reunimos en este nuestro pequeño rincón virtual para celebrar nuestra historia, prometernos amor sincero y sellar nuestro propio matrimonio simbólico lleno de complicidad, ternura y sueños por cumplir.
+                </p>
+
+                <!-- Panel desplegable/editable de nombres y fecha -->
+                <div class="max-w-2xl mx-auto bg-ivory/90 rounded-2xl p-5 border border-champagne/30 mb-8 text-left shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-burgundy flex items-center gap-1.5">
+                            <span>🖋️</span> Datos para el Altar y Certificado (Puedes personalizarlos)
+                        </span>
+                        <span class="text-[11px] text-charcoal/60 italic">Se actualiza al instante</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-charcoal/80 mb-1">Nombre o apodo de Él:</label>
+                            <input type="text" id="input-groom" value="Rey Arturo García Soto" oninput="syncNamesAndDate(true)"
+                                class="w-full px-3.5 py-2 rounded-xl border border-champagne/40 bg-white text-sm font-medium text-burgundy focus:outline-none focus:ring-2 focus:ring-burgundy/40">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-charcoal/80 mb-1">Nombre o apodo de Ella:</label>
+                            <input type="text" id="input-bride" value="Leslie Lisbeth Galicia Huerta" oninput="syncNamesAndDate(true)"
+                                class="w-full px-3.5 py-2 rounded-xl border border-champagne/40 bg-white text-sm font-medium text-burgundy focus:outline-none focus:ring-2 focus:ring-burgundy/40">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-charcoal/80 mb-1">Fecha de nuestra boda simbólica:</label>
+                            <input type="date" id="input-date" onchange="syncNamesAndDate(true)"
+                                class="w-full px-3.5 py-2 rounded-xl border border-champagne/40 bg-white text-sm font-medium text-charcoal focus:outline-none focus:ring-2 focus:ring-burgundy/40">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-charcoal/80 mb-1">Lugar simbólico / Dedicatoria corta:</label>
+                            <input type="text" id="input-location" value="Uniendo nuestros corazones sin importar la distancia" oninput="syncNamesAndDate(true)"
+                                class="w-full px-3.5 py-2 rounded-xl border border-champagne/40 bg-white text-sm font-medium text-charcoal focus:outline-none focus:ring-2 focus:ring-burgundy/40">
+                        </div>
+                    </div>
+
+                    <!-- Botones rápidos de versión corta o completa -->
+                    <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                        <span class="text-charcoal/60">Formato rápido:</span>
+                        <button type="button" onclick="setQuickNames('Rey Arturo García Soto', 'Leslie Lisbeth Galicia Huerta')" class="px-2.5 py-1 rounded-lg bg-blush hover:bg-roseDust/60 text-burgundy transition">
+                            Nombres Completos
+                        </button>
+                        <button type="button" onclick="setQuickNames('Rey Arturo', 'Leslie Lisbeth')" class="px-2.5 py-1 rounded-lg bg-blush hover:bg-roseDust/60 text-burgundy transition">
+                            Rey Arturo & Leslie Lisbeth
+                        </button>
+                        <button type="button" onclick="setQuickNames('Arturo', 'Leslie')" class="px-2.5 py-1 rounded-lg bg-blush hover:bg-roseDust/60 text-burgundy transition">
+                            Arturo & Leslie
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Botón Principal de Inicio -->
+                <button onclick="startCeremony()" class="btn-gold-shimmer text-white font-serif text-xl sm:text-2xl font-semibold px-8 sm:px-10 py-4 rounded-full shadow-lg hover:shadow-2xl transform hover:-translate-y-0.5 transition duration-300 inline-flex items-center gap-3 border border-champagne">
+                    <span>Comenzar nuestra ceremonia</span>
+                    <span>🕊️</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PASO 2: NUESTRAS PROMESAS Y VOTOS
+             ========================================== -->
+        <section id="step-2" class="step-section hidden">
+            <div class="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border border-champagne/40">
+                <div class="text-center mb-8">
+                    <span class="text-xs font-semibold uppercase tracking-widest text-champagne block mb-1">Paso 2 de 5 • El Corazón del Compromiso</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-burgundy">Nuestras Promesas y Votos de Amor</h2>
+                    <p class="text-sm sm:text-base text-charcoal/75 mt-2 max-w-2xl mx-auto">
+                        Elijan juntos las promesas que guiarán su camino y dedíquense unas palabras desde el corazón. Todo lo que elijan aparecerá en su Certificado Oficial.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Columna Rey Arturo -->
+                    <div class="bg-ivory rounded-2xl p-5 sm:p-6 border border-champagne/40 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-3 pb-4 mb-4 border-b border-champagne/25">
+                                <div class="w-10 h-10 rounded-full bg-burgundy text-champagneLight flex items-center justify-center font-serif font-bold text-lg">
+                                    🤵🏻
+                                </div>
+                                <div>
+                                    <span class="text-xs uppercase tracking-wider text-charcoal/60 block">Promesas de</span>
+                                    <h3 class="font-serif text-xl font-bold text-burgundy groom-name-label">Rey Arturo García Soto</h3>
+                                </div>
+                            </div>
+
+                            <p class="text-xs font-semibold uppercase tracking-wider text-charcoal/70 mb-3">
+                                Selecciona tus promesas para ella:
+                            </p>
+
+                            <div class="space-y-2.5 mb-6" id="groom-promises-list">
+                                <!-- Renderizado dinámico por JS -->
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-semibold uppercase tracking-wider text-burgundy">
+                                    💌 Votos personalizados de <span class="groom-short-label">Rey Arturo</span>:
+                                </label>
+                                <button type="button" onclick="inspireVow('groom')" class="text-xs text-burgundy underline hover:text-champagne transition">
+                                    ✨ Inspirarme con otra frase
+                                </button>
+                            </div>
+                            <textarea id="groom-custom-vow" rows="4" oninput="onVowInput('groom')"
+                                class="w-full p-3.5 rounded-xl border border-champagne/40 bg-white text-sm text-charcoal leading-relaxed focus:outline-none focus:ring-2 focus:ring-burgundy/40 font-serif italic text-base"
+                                placeholder="Escribe aquí lo que sientes por Leslie Lisbeth...">Mi amada Leslie Lisbeth, prometo caminar de tu mano en cada estación de nuestra vida, cuidar tu sonrisa como mi tesoro más valioso y amarte con la misma ilusión hoy, mañana y siempre.</textarea>
+                            <p id="groom-typing-indicator" class="text-[11px] text-emerald-700 italic mt-1 h-4"></p>
+                        </div>
+                    </div>
+
+                    <!-- Columna Leslie Lisbeth -->
+                    <div class="bg-ivory rounded-2xl p-5 sm:p-6 border border-champagne/40 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-3 pb-4 mb-4 border-b border-champagne/25">
+                                <div class="w-10 h-10 rounded-full bg-burgundy text-champagneLight flex items-center justify-center font-serif font-bold text-lg">
+                                    👰🏻‍♀️
+                                </div>
+                                <div>
+                                    <span class="text-xs uppercase tracking-wider text-charcoal/60 block">Promesas de</span>
+                                    <h3 class="font-serif text-xl font-bold text-burgundy bride-name-label">Leslie Lisbeth Galicia Huerta</h3>
+                                </div>
+                            </div>
+
+                            <p class="text-xs font-semibold uppercase tracking-wider text-charcoal/70 mb-3">
+                                Selecciona tus promesas para él:
+                            </p>
+
+                            <div class="space-y-2.5 mb-6" id="bride-promises-list">
+                                <!-- Renderizado dinámico por JS -->
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-semibold uppercase tracking-wider text-burgundy">
+                                    💌 Votos personalizados de <span class="bride-short-label">Leslie Lisbeth</span>:
+                                </label>
+                                <button type="button" onclick="inspireVow('bride')" class="text-xs text-burgundy underline hover:text-champagne transition">
+                                    ✨ Inspirarme con otra frase
+                                </button>
+                            </div>
+                            <textarea id="bride-custom-vow" rows="4" oninput="onVowInput('bride')"
+                                class="w-full p-3.5 rounded-xl border border-champagne/40 bg-white text-sm text-charcoal leading-relaxed focus:outline-none focus:ring-2 focus:ring-burgundy/40 font-serif italic text-base"
+                                placeholder="Escribe aquí lo que sientes por Rey Arturo...">Mi amado Rey Arturo, prometo ser tu refugio seguro, celebrar cada uno de tus logros como míos y construir a tu lado una historia llena de complicidad, ternura y amor infinito.</textarea>
+                            <p id="bride-typing-indicator" class="text-[11px] text-emerald-700 italic mt-1 h-4"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de navegación -->
+                <div class="mt-8 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-champagne/20">
+                    <button onclick="goToStep(1, true)" class="px-5 py-2.5 rounded-full border border-champagne/50 text-charcoal/80 hover:bg-blush text-sm font-medium transition">
+                        ← Volver al Altar
+                    </button>
+                    <button onclick="goToStep(3, true)" class="btn-gold-shimmer text-white font-serif text-lg font-semibold px-8 py-3 rounded-full shadow-md hover:shadow-lg transition flex items-center gap-2">
+                        <span>Continuar al "Sí, Acepto"</span>
+                        <span>💍</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PASO 3: EL GRAN MOMENTO ("SÍ, ACEPTO")
+             ========================================== -->
+        <section id="step-3" class="step-section hidden">
+            <div class="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border border-champagne/40 text-center relative">
+                <span class="text-xs font-semibold uppercase tracking-widest text-champagne block mb-1">Paso 3 de 5 • El Gran Momento</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-burgundy">¿Aceptan Unir sus Vidas Simbólicamente?</h2>
+                <p class="text-sm sm:text-base text-charcoal/75 mt-2 max-w-xl mx-auto">
+                    Es hora de responder la pregunta más importante de esta ceremonia. Presionen su respuesta cuando estén listos (¡o intenten presionar "Lo estoy pensando" si pueden!).
+                </p>
+
+                <!-- Visualizador interactivo de Anillos -->
+                <div class="my-6 py-5 px-4 rounded-2xl bg-gradient-to-r from-blush/50 via-ivory to-blush/50 border border-champagne/30 max-w-lg mx-auto">
+                    <div class="flex items-center justify-center h-24 relative">
+                        <!-- Anillo de Rey Arturo -->
+                        <div id="ring-visual-groom" class="transition-all duration-700 transform -translate-x-8 opacity-60">
+                            <svg class="w-20 h-20" viewBox="0 0 80 80" fill="none">
+                                <circle cx="40" cy="44" r="22" stroke="#D4AF37" stroke-width="6"/>
+                                <circle cx="40" cy="44" r="19" stroke="#F3E5AB" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <!-- Corazón central cuando ambos aceptan -->
+                        <div id="rings-sparkle-badge" class="hidden absolute z-20 -top-2 bg-burgundy text-champagneLight text-xs px-3 py-1 rounded-full font-semibold shadow-md animate-bounce">
+                            ✨ ¡Unidos por Siempre! ✨
+                        </div>
+                        <!-- Anillo de Leslie Lisbeth -->
+                        <div id="ring-visual-bride" class="transition-all duration-700 transform translate-x-8 opacity-60">
+                            <svg class="w-20 h-20" viewBox="0 0 80 80" fill="none">
+                                <circle cx="40" cy="44" r="20" stroke="#D4AF37" stroke-width="5"/>
+                                <path d="M40 22L34 14L40 8L46 14L40 22Z" fill="#FFF" stroke="#D4AF37" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p id="rings-status-text" class="text-xs font-medium text-burgundy mt-1">
+                        Esperando el "Sí, Acepto" de ambos novios...
+                    </p>
+                </div>
+
+                <!-- Tarjetas Interactivas para ambos novios -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6 text-left">
+                    <!-- Tarjeta Rey Arturo -->
+                    <div id="card-accept-groom" class="bg-ivory rounded-2xl p-6 border-2 border-champagne/40 shadow-md relative overflow-hidden transition-all duration-300 min-h-[290px] flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-3 py-1 rounded-full bg-blush text-burgundy text-xs font-semibold">Turno del Novio 🤵🏻</span>
+                                <span id="badge-groom-status" class="text-xs text-charcoal/60 italic">Pendiente de responder</span>
+                            </div>
+                            <h3 class="font-serif text-2xl font-bold text-burgundy groom-name-label mb-2">Rey Arturo García Soto</h3>
+                            <p class="text-sm text-charcoal/80 leading-relaxed">
+                                ¿Aceptas a <strong class="bride-name-label text-burgundy">Leslie Lisbeth Galicia Huerta</strong> como tu esposa simbólica, compañera de aventuras y amor de tu vida para cuidarla y elegirla todos los días?
+                            </p>
+                        </div>
+
+                        <div class="mt-6 space-y-3 relative">
+                            <button id="btn-yes-groom" onclick="acceptProposal('groom')"
+                                class="w-full btn-gold-shimmer text-white font-serif text-lg font-bold py-3.5 px-6 rounded-xl shadow-md hover:shadow-xl transform hover:scale-[1.02] transition flex items-center justify-center gap-2">
+                                <span>¡Sí, acepto casarme contigo! ❤️</span>
+                            </button>
+
+                            <div class="h-10 relative flex items-center justify-center">
+                                <button id="btn-no-groom"
+                                    onmouseenter="escapeButton('btn-no-groom', 'msg-escape-groom')"
+                                    ontouchstart="escapeButton('btn-no-groom', 'msg-escape-groom'); return false;"
+                                    onclick="escapeButton('btn-no-groom', 'msg-escape-groom')"
+                                    class="px-3 py-1.5 rounded-lg border border-charcoal/20 bg-white text-charcoal/60 text-xs transition-all duration-200">
+                                    No sé / Lo estoy pensando 🤔
+                                </button>
+                            </div>
+                            <p id="msg-escape-groom" class="text-[11px] text-center text-burgundy italic h-4"></p>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Leslie Lisbeth -->
+                    <div id="card-accept-bride" class="bg-ivory rounded-2xl p-6 border-2 border-champagne/40 shadow-md relative overflow-hidden transition-all duration-300 min-h-[290px] flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-3 py-1 rounded-full bg-blush text-burgundy text-xs font-semibold">Turno de la Novia 👰🏻‍♀️</span>
+                                <span id="badge-bride-status" class="text-xs text-charcoal/60 italic">Pendiente de responder</span>
+                            </div>
+                            <h3 class="font-serif text-2xl font-bold text-burgundy bride-name-label mb-2">Leslie Lisbeth Galicia Huerta</h3>
+                            <p class="text-sm text-charcoal/80 leading-relaxed">
+                                ¿Aceptas a <strong class="groom-name-label text-burgundy">Rey Arturo García Soto</strong> como tu esposo simbólico, cómplice de sueños y amor de tu vida para cuidarlo y elegirlo todos los días?
+                            </p>
+                        </div>
+
+                        <div class="mt-6 space-y-3 relative">
+                            <button id="btn-yes-bride" onclick="acceptProposal('bride')"
+                                class="w-full btn-gold-shimmer text-white font-serif text-lg font-bold py-3.5 px-6 rounded-xl shadow-md hover:shadow-xl transform hover:scale-[1.02] transition flex items-center justify-center gap-2">
+                                <span>¡Sí, acepto casarme contigo! ❤️</span>
+                            </button>
+
+                            <div class="h-10 relative flex items-center justify-center">
+                                <button id="btn-no-bride"
+                                    onmouseenter="escapeButton('btn-no-bride', 'msg-escape-bride')"
+                                    ontouchstart="escapeButton('btn-no-bride', 'msg-escape-bride'); return false;"
+                                    onclick="escapeButton('btn-no-bride', 'msg-escape-bride')"
+                                    class="px-3 py-1.5 rounded-lg border border-charcoal/20 bg-white text-charcoal/60 text-xs transition-all duration-200">
+                                    No sé / Lo estoy pensando 🤔
+                                </button>
+                            </div>
+                            <p id="msg-escape-bride" class="text-[11px] text-center text-burgundy italic h-4"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensaje cuando ambos aceptan -->
+                <div id="both-accepted-banner" class="hidden my-6 p-5 rounded-2xl bg-gradient-to-r from-burgundy via-burgundyLight to-burgundy text-white shadow-lg">
+                    <h4 class="font-serif text-2xl font-bold text-champagneLight mb-1">
+                        💍 ¡Ambos han dicho "Sí, Acepto"! 💍
+                    </h4>
+                    <p class="text-xs sm:text-sm text-ivory/90">
+                        Los anillos simbólicos han sido intercambiados. Ahora pasemos a estampar sus firmas de amor eterno.
+                    </p>
+                </div>
+
+                <!-- Navegación -->
+                <div class="mt-8 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-champagne/20">
+                    <button onclick="goToStep(2, true)" class="px-5 py-2.5 rounded-full border border-champagne/50 text-charcoal/80 hover:bg-blush text-sm font-medium transition">
+                        ← Volver a Votos
+                    </button>
+                    <button onclick="proceedFromAcceptStep()" class="btn-gold-shimmer text-white font-serif text-lg font-semibold px-8 py-3 rounded-full shadow-md hover:shadow-lg transition flex items-center gap-2">
+                        <span>Pasar a Firmar nuestra Unión</span>
+                        <span>✍️</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PASO 4: FIRMA EN LIENZO (CANVAS)
+             ========================================== -->
+        <section id="step-4" class="step-section hidden">
+            <div class="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border border-champagne/40">
+                <div class="text-center mb-8">
+                    <span class="text-xs font-semibold uppercase tracking-widest text-champagne block mb-1">Paso 4 de 5 • Sello de Amor</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-burgundy">Firmen su Acta de Matrimonio Simbólico</h2>
+                    <p class="text-sm sm:text-base text-charcoal/75 mt-2 max-w-2xl mx-auto">
+                        Usen su dedo (en celular) o el ratón para dibujar su firma, sus iniciales o un corazoncito en su respectivo recuadro. También pueden generar una firma caligráfica con un clic.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Lienzo Firma Rey Arturo -->
+                    <div class="bg-ivory rounded-2xl p-5 border border-champagne/40 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-[11px] uppercase tracking-wider text-charcoal/60 block">Firma del Esposo Simbólico</span>
+                                <h3 class="font-serif text-xl font-bold text-burgundy groom-name-label">Rey Arturo García Soto</h3>
+                            </div>
+                            <span class="text-xl">🖋️</span>
+                        </div>
+
+                        <div class="bg-white rounded-xl border-2 border-dashed border-champagne/60 overflow-hidden relative h-44">
+                            <canvas id="canvas-groom" class="signature-pad w-full h-full block"></canvas>
+                            <div class="pointer-events-none absolute bottom-3 left-6 right-6 border-b border-charcoal/20 text-center">
+                                <span class="text-[10px] text-charcoal/40 uppercase tracking-widest">Traza tu firma o un corazón aquí</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+                            <button type="button" onclick="clearSignature('groom')" class="px-3 py-1.5 rounded-lg border border-charcoal/20 bg-white hover:bg-blush text-xs text-charcoal/80 transition">
+                                🗑️ Limpiar firma
+                            </button>
+                            <button type="button" onclick="autoScriptSignature('groom')" class="px-3 py-1.5 rounded-lg bg-blush hover:bg-roseDust/60 text-burgundy text-xs font-medium transition">
+                                ✨ Generar firma artística
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lienzo Firma Leslie Lisbeth -->
+                    <div class="bg-ivory rounded-2xl p-5 border border-champagne/40 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <span class="text-[11px] uppercase tracking-wider text-charcoal/60 block">Firma de la Esposa Simbólica</span>
+                                <h3 class="font-serif text-xl font-bold text-burgundy bride-name-label">Leslie Lisbeth Galicia Huerta</h3>
+                            </div>
+                            <span class="text-xl">🖋️</span>
+                        </div>
+
+                        <div class="bg-white rounded-xl border-2 border-dashed border-champagne/60 overflow-hidden relative h-44">
+                            <canvas id="canvas-bride" class="signature-pad w-full h-full block"></canvas>
+                            <div class="pointer-events-none absolute bottom-3 left-6 right-6 border-b border-charcoal/20 text-center">
+                                <span class="text-[10px] text-charcoal/40 uppercase tracking-widest">Traza tu firma o un corazón aquí</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+                            <button type="button" onclick="clearSignature('bride')" class="px-3 py-1.5 rounded-lg border border-charcoal/20 bg-white hover:bg-blush text-xs text-charcoal/80 transition">
+                                🗑️ Limpiar firma
+                            </button>
+                            <button type="button" onclick="autoScriptSignature('bride')" class="px-3 py-1.5 rounded-lg bg-blush hover:bg-roseDust/60 text-burgundy text-xs font-medium transition">
+                                ✨ Generar firma artística
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón culminante -->
+                <div class="mt-10 text-center">
+                    <button onclick="declareOfficialSpouses()" class="btn-gold-shimmer text-white font-serif text-xl sm:text-2xl font-bold px-8 sm:px-12 py-4 rounded-full shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition inline-flex items-center gap-3 border border-champagne">
+                        <span>🎉 ¡Declararnos Oficialmente Esposos Simbólicos! 🎉</span>
+                    </button>
+                    <p class="text-xs text-charcoal/60 mt-2">
+                        Al presionar, se generará su Certificado Oficial del Amor Eterno con lluvia de corazones y oro.
+                    </p>
+                </div>
+
+                <!-- Navegación inferior -->
+                <div class="mt-6 flex items-center justify-between pt-4 border-t border-champagne/20">
+                    <button onclick="goToStep(3, true)" class="px-5 py-2.5 rounded-full border border-champagne/50 text-charcoal/80 hover:bg-blush text-sm font-medium transition">
+                        ← Volver al "Sí, Acepto"
+                    </button>
+                    <span class="text-xs text-charcoal/60 italic">✨ Las firmas se ven en tiempo real en ambas pantallas</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PASO 5: CERTIFICADO OFICIAL DEL AMOR ETERNO
+             ========================================== -->
+        <section id="step-5" class="step-section hidden">
+            <!-- Barra de acciones del certificado (No se imprime) -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white/90 backdrop-blur-md p-4 rounded-2xl border border-champagne/40 shadow-sm no-print">
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-burgundy">¡Felicidades, Esposos Simbólicos! 🥂❤️</h3>
+                    <p class="text-xs text-charcoal/70">Aquí tienen su recuerdo oficial para guardar o imprimir.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <button onclick="triggerHeartConfettiBurst()" class="px-4 py-2 rounded-full bg-blush hover:bg-roseDust/70 text-burgundy text-xs font-semibold transition flex items-center gap-1.5">
+                        <span>🎊</span> <span>Lanzar más Confeti</span>
+                    </button>
+                    <button onclick="downloadCertificateImage()" id="btn-download-cert" class="px-4 py-2 rounded-full bg-champagne hover:bg-champagne/90 text-charcoal text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                        <span>📸</span> <span>Guardar como Imagen</span>
+                    </button>
+                    <button onclick="window.print()" class="px-4 py-2 rounded-full bg-burgundy hover:bg-burgundyLight text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                        <span>🖨️</span> <span>Imprimir / Guardar PDF</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- EL CERTIFICADO ORNAMENTAL -->
+            <div id="certificate-wrapper" class="certificate-border rounded-2xl p-6 sm:p-10 md:p-12 relative overflow-hidden">
+                
+                <!-- Marca de agua romántica central -->
+                <div class="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.04]">
+                    <svg class="w-96 h-96 text-burgundy" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </div>
+
+                <!-- Encabezado del Certificado -->
+                <div class="text-center relative z-10 border-b border-champagne/40 pb-6 mb-6">
+                    <p class="text-[11px] sm:text-xs uppercase tracking-[0.25em] text-champagne font-semibold mb-1">
+                        República Romántica de Nuestro Amor • Acta Oficial Simbólica
+                    </p>
+                    <h1 class="font-serif text-2xl sm:text-4xl md:text-5xl font-bold text-burgundy tracking-wide">
+                        Certificado de Matrimonio Simbólico
+                    </h1>
+                    <p class="font-script text-2xl sm:text-3xl text-champagne mt-1">
+                        y Compromiso de Amor Eterno
+                    </p>
+                </div>
+
+                <!-- Cuerpo solemne y romántico -->
+                <div class="text-center relative z-10 space-y-4">
+                    <p class="font-serif italic text-base sm:text-lg text-charcoal/85 max-w-2xl mx-auto">
+                        Por medio de la presente acta del corazón, queda solemnemente registrado que en <span id="cert-location" class="font-semibold text-burgundy">nuestro rincón favorito del universo</span>, el día <span id="cert-date" class="font-semibold text-burgundy"></span>, han decidido unir sus caminos en complicidad, respeto y amor verdadero:
+                    </p>
+
+                    <div class="py-3">
+                        <div class="font-serif text-2xl sm:text-4xl font-bold text-burgundy" id="cert-groom-name">
+                            Rey Arturo García Soto
+                        </div>
+                        <div class="font-script text-2xl sm:text-3xl text-champagne my-0.5">&amp;</div>
+                        <div class="font-serif text-2xl sm:text-4xl font-bold text-burgundy" id="cert-bride-name">
+                            Leslie Lisbeth Galicia Huerta
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Promesas y Votos en el Certificado -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6 relative z-10">
+                    <!-- Votos y promesas de Él -->
+                    <div class="bg-white/80 rounded-xl p-4 sm:p-5 border border-champagne/40">
+                        <h4 class="font-serif font-bold text-base sm:text-lg text-burgundy border-b border-champagne/30 pb-1.5 mb-2.5 flex items-center justify-between">
+                            <span>Promesas de <span class="groom-short-label">Rey Arturo</span></span>
+                            <span>🤵🏻</span>
+                        </h4>
+                        <ul id="cert-groom-promises" class="text-xs text-charcoal/85 space-y-1.5 mb-3 list-disc list-inside">
+                            <!-- Llenado por JS -->
+                        </ul>
+                        <div class="bg-blush/50 rounded-lg p-3 border-l-2 border-burgundy">
+                            <p id="cert-groom-vow" class="font-serif italic text-sm sm:text-base text-charcoal leading-snug"></p>
+                        </div>
+                    </div>
+
+                    <!-- Votos y promesas de Ella -->
+                    <div class="bg-white/80 rounded-xl p-4 sm:p-5 border border-champagne/40">
+                        <h4 class="font-serif font-bold text-base sm:text-lg text-burgundy border-b border-champagne/30 pb-1.5 mb-2.5 flex items-center justify-between">
+                            <span>Promesas de <span class="bride-short-label">Leslie Lisbeth</span></span>
+                            <span>👰🏻‍♀️</span>
+                        </h4>
+                        <ul id="cert-bride-promises" class="text-xs text-charcoal/85 space-y-1.5 mb-3 list-disc list-inside">
+                            <!-- Llenado por JS -->
+                        </ul>
+                        <div class="bg-blush/50 rounded-lg p-3 border-l-2 border-burgundy">
+                            <p id="cert-bride-vow" class="font-serif italic text-sm sm:text-base text-charcoal leading-snug"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pie del Certificado: Firmas y Sello Dorado -->
+                <div class="mt-8 pt-6 border-t border-champagne/40 grid grid-cols-1 sm:grid-cols-3 items-center gap-6 relative z-10">
+                    <!-- Firma de Rey Arturo -->
+                    <div class="text-center">
+                        <div class="h-24 flex items-center justify-center bg-white/60 rounded-lg border border-champagne/25 mb-2 p-2">
+                            <img id="cert-sig-groom" alt="Firma de Rey Arturo" class="max-h-20 max-w-full object-contain" />
+                        </div>
+                        <div class="border-t border-charcoal/40 pt-1">
+                            <p class="font-serif font-bold text-sm text-burgundy groom-name-label">Rey Arturo García Soto</p>
+                            <p class="text-[10px] uppercase tracking-widest text-charcoal/60">Esposo Simbólico</p>
+                        </div>
+                    </div>
+
+                    <!-- Sello Oficial Dorado Central -->
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="w-28 h-28 rounded-full wax-seal flex flex-col items-center justify-center text-center p-2 border-2 border-white/60 relative">
+                            <div class="w-24 h-24 rounded-full border border-dashed border-burgundy/60 flex flex-col items-center justify-center p-1">
+                                <span class="text-xs">👑 ❤️ 💍</span>
+                                <span class="font-serif font-bold text-[10px] uppercase tracking-wider text-burgundy leading-tight mt-0.5">
+                                    Amor Eterno &amp; Compromiso Oficial
+                                </span>
+                                <span class="text-[8px] text-charcoal/80 tracking-widest mt-0.5">UNIÓN SIMBÓLICA</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Firma de Leslie Lisbeth -->
+                    <div class="text-center">
+                        <div class="h-24 flex items-center justify-center bg-white/60 rounded-lg border border-champagne/25 mb-2 p-2">
+                            <img id="cert-sig-bride" alt="Firma de Leslie Lisbeth" class="max-h-20 max-w-full object-contain" />
+                        </div>
+                        <div class="border-t border-charcoal/40 pt-1">
+                            <p class="font-serif font-bold text-sm text-burgundy bride-name-label">Leslie Lisbeth Galicia Huerta</p>
+                            <p class="text-[10px] uppercase tracking-widest text-charcoal/60">Esposa Simbólica</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frase final de cierre -->
+                <div class="text-center mt-6 pt-3 text-xs font-serif italic text-charcoal/70">
+                    "Y desde hoy, cada día juntos es nuestra mejor aventura. ¡Que vivan los novios!"
+                </div>
+            </div>
+
+            <!-- Botones inferiores para volver a editar -->
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-3 no-print">
+                <button onclick="goToStep(2, true)" class="px-5 py-2.5 rounded-full border border-champagne/50 bg-white/80 hover:bg-blush text-burgundy text-xs sm:text-sm font-medium transition">
+                    ← Volver a ver o editar nuestros votos
+                </button>
+                <button onclick="resetAcceptancesForReplay()" class="px-4 py-2 rounded-full border border-champagne/40 bg-white/60 hover:bg-blush text-charcoal/70 text-xs transition">
+                    🔄 Repetir el momento del "Sí, Acepto"
+                </button>
+                <button onclick="goToStep(4, true)" class="px-5 py-2.5 rounded-full border border-champagne/50 bg-white/80 hover:bg-blush text-burgundy text-xs sm:text-sm font-medium transition">
+                    ✍️ Volver a las firmas
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Notificación flotante personalizada -->
+    <div id="toast-notification" class="fixed bottom-5 right-5 z-50 hidden max-w-sm bg-burgundy text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-champagne flex items-center gap-3 transition-all">
+        <span id="toast-icon" class="text-xl">💖</span>
+        <p id="toast-message" class="text-xs sm:text-sm font-medium"></p>
+    </div>
+
+    <!-- ==========================================
+         LÓGICA INTERACTIVA Y MULTIJUGADOR EN VIVO
+         ========================================== -->
+    <script>
+        // Estado central de la ceremonia
+        const weddingState = {
+            myRole: "groom", // 'groom' (Rey Arturo) o 'bride' (Leslie Lisbeth)
+            roomCode: "REY-LESLIE-AMOR",
+            currentStep: 1,
+            soundEnabled: true,
+            groomName: "Rey Arturo García Soto",
+            brideName: "Leslie Lisbeth Galicia Huerta",
+            weddingDate: "2026-10-21",
+            weddingLocation: "Uniendo nuestros corazones sin importar la distancia",
+            groomAccepted: false,
+            brideAccepted: false,
+            groomSigned: false,
+            brideSigned: false,
+            groomPromises: [0, 1, 2, 3],
+            bridePromises: [0, 1, 2, 3],
+            groomVow: "Mi amada Leslie Lisbeth, prometo caminar de tu mano en cada estación de nuestra vida, cuidar tu sonrisa como mi tesoro más valioso y amarte con la misma ilusión hoy, mañana y siempre.",
+            brideVow: "Mi amado Rey Arturo, prometo ser tu refugio seguro, celebrar cada uno de tus logros como míos y construir a tu lado una historia llena de complicidad, ternura y amor infinito.",
+            groomSigData: "",
+            brideSigData: "",
+            lastHeartbeatTs: 0,
+            lastCelebrationTs: 0
+        };
+
+        // Referencia para disparar guardado en Firebase desde funciones UI
+        window.pushCeremonyUpdate = null;
+        let vowDebounceTimer = null;
+
+        // Catálogo de promesas románticas seleccionables
+        const romanticPromisesCatalog = [
+            "Prometo apoyarte en cada sueño y meta sin importar la distancia.",
+            "Prometo hacerte reír incluso en los días más difíciles.",
+            "Prometo elegirte todos los días con el mismo amor que hoy.",
+            "Prometo ser tu lugar seguro, tu paz y tu mejor equipo siempre.",
+            "Prometo escucharte con paciencia, ternura y un corazón abierto.",
+            "Prometo llenarte de besos, abrazos y detalles inesperados.",
+            "Prometo cuidar nuestra complicidad y celebrar cada logro tuyo."
+        ];
+
+        // Frases de inspiración para votos personalizados
+        const groomInspirations = [
+            "Mi amada Leslie Lisbeth, prometo caminar de tu mano en cada estación de nuestra vida, cuidar tu sonrisa como mi tesoro más valioso y amarte con la misma ilusión hoy, mañana y siempre.",
+            "Leslie Lisbeth, desde que llegaste a mi vida todo tiene más luz. Hoy te elijo como mi esposa simbólica para compartir risas, sueños, desvelos y todo nuestro futuro juntos.",
+            "A ti, mi niña hermosa Leslie Lisbeth: prometo ser tu cómplice incondicional, abrazarte fuerte cuando el mundo pese y recordarte cada día lo increíblemente valiosa que eres para mí."
+        ];
+
+        const brideInspirations = [
+            "Mi amado Rey Arturo, prometo ser tu refugio seguro, celebrar cada uno de tus logros como míos y construir a tu lado una historia llena de complicidad, ternura y amor infinito.",
+            "Rey Arturo, eres mi persona favorita en el mundo. Hoy te doy mi corazón en este matrimonio simbólico, prometiendo cuidarte, apoyarte y amarte en cada paso que demos.",
+            "Para mi amor Rey Arturo: gracias por ser mi hogar y mi alegría. Prometo caminar siempre a tu lado, multiplicar nuestras sonrisas y elegir nuestro amor por encima de todo."
+        ];
+
+        let groomInspirationIdx = 0;
+        let brideInspirationIdx = 0;
+
+        // Mensajes divertidos cuando el botón "No sé" se escapa
+        const playfulEscapeMessages = [
+            "¡Ups! Ese botón es muy tímido, mejor dale al Sí ❤️",
+            "¡Jajaja! El destino bloqueó esa opción 💘",
+            "¡No puedes atraparme! El amor verdadero manda aquí ✨",
+            "¡Error 404: Duda no encontrada! Solo se permite puro amor 🥰",
+            "¡Corre botón, corre! Aquí ya sabemos que se aman 💍"
+        ];
+
+        // ==========================================
+        // 1. AUDIO ROMÁNTICO SINTETIZADO (TONE.JS)
+        // ==========================================
+        let synth = null;
+        function initSynth() {
+            if (!synth && typeof Tone !== 'undefined') {
+                synth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 0.08, decay: 0.3, sustain: 0.2, release: 1.5 }
+                }).toDestination();
+                synth.volume.value = -10;
+            }
+        }
+
+        async function playRomanticChime(type = 'soft') {
+            if (!weddingState.soundEnabled || typeof Tone === 'undefined') return;
+            try {
+                await Tone.start();
+                initSynth();
+                const now = Tone.now();
+                if (type === 'soft') {
+                    synth.triggerAttackRelease(["C5", "E5", "G5"], "8n", now);
+                } else if (type === 'heartbeat') {
+                    synth.triggerAttackRelease(["E5", "G5"], "16n", now);
+                    synth.triggerAttackRelease(["G5", "C6"], "8n", now + 0.14);
+                } else if (type === 'accept') {
+                    synth.triggerAttackRelease("C5", "8n", now);
+                    synth.triggerAttackRelease("E5", "8n", now + 0.12);
+                    synth.triggerAttackRelease("G5", "8n", now + 0.24);
+                    synth.triggerAttackRelease("C6", "2n", now + 0.36);
+                } else if (type === 'wedding') {
+                    synth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "4n", now);
+                    synth.triggerAttackRelease(["F4", "A4", "C5", "F5"], "4n", now + 0.35);
+                    synth.triggerAttackRelease(["G4", "B4", "D5", "G5"], "4n", now + 0.7);
+                    synth.triggerAttackRelease(["C4", "E4", "G4", "C5", "E5"], "1n", now + 1.05);
+                }
+            } catch (e) {
+                // Ignorar si el navegador bloquea el audio antes de interacción
+            }
+        }
+
+        function toggleAudio() {
+            weddingState.soundEnabled = !weddingState.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            const label = document.getElementById('sound-label');
+            if (weddingState.soundEnabled) {
+                icon.textContent = '🔔';
+                label.textContent = 'Sonido';
+                playRomanticChime('soft');
+            } else {
+                icon.textContent = '🔕';
+                label.textContent = 'Silencio';
+            }
+        }
+
+        // ==========================================
+        // 2. IDENTIDAD (REY ARTURO / LESLIE LISBETH) Y SALA
+        // ==========================================
+        function selectRole(role) {
+            weddingState.myRole = role;
+            const btnGroom = document.getElementById('role-btn-groom');
+            const btnBride = document.getElementById('role-btn-bride');
+            const roleLabel = document.getElementById('active-role-label');
+
+            if (role === 'groom') {
+                btnGroom.className = "px-2.5 py-1 rounded-full text-[11px] font-semibold transition bg-burgundy text-white shadow-sm";
+                btnBride.className = "px-2.5 py-1 rounded-full text-[11px] font-semibold transition text-burgundy hover:bg-white/60";
+                roleLabel.textContent = "Rey Arturo 🤵🏻";
+                showToast("Interactuando ahora como Rey Arturo 🤵🏻❤️");
+            } else {
+                btnBride.className = "px-2.5 py-1 rounded-full text-[11px] font-semibold transition bg-burgundy text-white shadow-sm";
+                btnGroom.className = "px-2.5 py-1 rounded-full text-[11px] font-semibold transition text-burgundy hover:bg-white/60";
+                roleLabel.textContent = "Leslie Lisbeth 👰🏻‍♀️";
+                showToast("Interactuando ahora como Leslie Lisbeth 👰🏻‍♀️❤️");
+            }
+            playRomanticChime('soft');
+        }
+
+        function copyRoomCode() {
+            const input = document.getElementById('room-code-input');
+            input.select();
+            document.execCommand('copy');
+            showToast(`Código de sala "${weddingState.roomCode}" copiado. ¡Asegúrate de que ambos tengan el mismo! 💞`);
+        }
+
+        function changeRoomCode(newCode) {
+            const clean = (newCode || "REY-LESLIE-AMOR").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '-');
+            document.getElementById('room-code-input').value = clean;
+            weddingState.roomCode = clean;
+            if (typeof window.reconnectCeremonyRoom === 'function') {
+                window.reconnectCeremonyRoom(clean);
+            }
+            showToast(`Cambiado a la sala en vivo: ${clean} ✨`);
+        }
+
+        function sendRealtimeHeartbeat() {
+            const senderName = weddingState.myRole === 'groom'
+                ? getShortName(weddingState.groomName)
+                : getShortName(weddingState.brideName);
+            const nowTs = Date.now();
+            weddingState.lastHeartbeatTs = nowTs;
+
+            triggerHeartConfettiBurst();
+            playRomanticChime('heartbeat');
+            showToast(`💌 ¡Enviaste un beso y lluvia de corazones a la pantalla de tu amor!`);
+
+            if (typeof window.pushCeremonyUpdate === 'function') {
+                window.pushCeremonyUpdate({
+                    lastHeartbeatTs: nowTs,
+                    lastHeartbeatFrom: senderName
+                });
+            }
+        }
+
+        // ==========================================
+        // 3. INICIALIZACIÓN DE FECHA, NOMBRES Y PROMESAS
+        // ==========================================
+        function initializeWeddingUI() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const dateInput = document.getElementById('input-date');
+            dateInput.value = `${yyyy}-${mm}-${dd}`;
+            weddingState.weddingDate = dateInput.value;
+
+            renderPromisesChecklists();
+            syncNamesAndDate(false);
+            initPetalsBackground();
+            initSignaturePads();
+        }
+
+        function getShortName(fullName) {
+            const parts = (fullName || "").trim().split(/\s+/);
+            if (parts.length <= 2) return (fullName || "").trim();
+            return `${parts[0]} ${parts[1]}`;
+        }
+
+        function formatSpanishDate(dateStr) {
+            if (!dateStr) return "Hoy y para siempre";
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return dateStr;
+            const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            return dateObj.toLocaleDateString('es-MX', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
+        function syncNamesAndDate(pushToCloud = false) {
+            const groomVal = document.getElementById('input-groom').value.trim() || "Rey Arturo García Soto";
+            const brideVal = document.getElementById('input-bride').value.trim() || "Leslie Lisbeth Galicia Huerta";
+            const dateVal = document.getElementById('input-date').value;
+            const locVal = document.getElementById('input-location').value.trim() || "Uniendo nuestros corazones sin importar la distancia";
+
+            weddingState.groomName = groomVal;
+            weddingState.brideName = brideVal;
+            weddingState.weddingDate = dateVal;
+            weddingState.weddingLocation = locVal;
+
+            updateDOMNamesAndLabels();
+
+            if (pushToCloud && typeof window.pushCeremonyUpdate === 'function') {
+                clearTimeout(vowDebounceTimer);
+                vowDebounceTimer = setTimeout(() => {
+                    window.pushCeremonyUpdate({
+                        groomName: groomVal,
+                        brideName: brideVal,
+                        weddingDate: dateVal,
+                        weddingLocation: locVal
+                    });
+                }, 250);
+            }
+        }
+
+        function updateDOMNamesAndLabels() {
+            const groomVal = weddingState.groomName;
+            const brideVal = weddingState.brideName;
+            const groomShort = getShortName(groomVal);
+            const brideShort = getShortName(brideVal);
+
+            document.getElementById('hero-groom-name').textContent = groomVal;
+            document.getElementById('hero-bride-name').textContent = brideVal;
+            document.getElementById('nav-couple-names').textContent = `${groomShort} & ${brideShort}`;
+
+            document.querySelectorAll('.groom-name-label').forEach(el => el.textContent = groomVal);
+            document.querySelectorAll('.bride-name-label').forEach(el => el.textContent = brideVal);
+            document.querySelectorAll('.groom-short-label').forEach(el => el.textContent = groomShort);
+            document.querySelectorAll('.bride-short-label').forEach(el => el.textContent = brideShort);
+        }
+
+        function setQuickNames(groom, bride) {
+            document.getElementById('input-groom').value = groom;
+            document.getElementById('input-bride').value = bride;
+            syncNamesAndDate(true);
+            playRomanticChime('soft');
+        }
+
+        function renderPromisesChecklists() {
+            const groomContainer = document.getElementById('groom-promises-list');
+            const brideContainer = document.getElementById('bride-promises-list');
+
+            groomContainer.innerHTML = '';
+            brideContainer.innerHTML = '';
+
+            romanticPromisesCatalog.forEach((promiseText, idx) => {
+                const isGroomChecked = weddingState.groomPromises.includes(idx);
+                const isBrideChecked = weddingState.bridePromises.includes(idx);
+
+                // Item Rey Arturo
+                const groomLabel = document.createElement('label');
+                groomLabel.className = `flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition text-xs sm:text-sm ${
+                    isGroomChecked ? 'bg-blush/80 border-burgundy/40 text-charcoal font-medium' : 'bg-white border-champagne/30 text-charcoal/70 hover:bg-blush/30'
+                }`;
+                groomLabel.innerHTML = `
+                    <input type="checkbox" class="mt-0.5 accent-burgundy w-4 h-4 rounded" ${isGroomChecked ? 'checked' : ''} onchange="togglePromise('groom', ${idx})">
+                    <span>${promiseText}</span>
+                `;
+                groomContainer.appendChild(groomLabel);
+
+                // Item Leslie Lisbeth
+                const brideLabel = document.createElement('label');
+                brideLabel.className = `flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition text-xs sm:text-sm ${
+                    isBrideChecked ? 'bg-blush/80 border-burgundy/40 text-charcoal font-medium' : 'bg-white border-champagne/30 text-charcoal/70 hover:bg-blush/30'
+                }`;
+                brideLabel.innerHTML = `
+                    <input type="checkbox" class="mt-0.5 accent-burgundy w-4 h-4 rounded" ${isBrideChecked ? 'checked' : ''} onchange="togglePromise('bride', ${idx})">
+                    <span>${promiseText}</span>
+                `;
+                brideContainer.appendChild(brideLabel);
+            });
+        }
+
+        function togglePromise(person, index) {
+            const list = person === 'groom' ? weddingState.groomPromises : weddingState.bridePromises;
+            const pos = list.indexOf(index);
+            if (pos >= 0) {
+                list.splice(pos, 1);
+            } else {
+                list.push(index);
+            }
+            renderPromisesChecklists();
+            playRomanticChime('soft');
+
+            if (typeof window.pushCeremonyUpdate === 'function') {
+                window.pushCeremonyUpdate({
+                    groomPromises: weddingState.groomPromises,
+                    bridePromises: weddingState.bridePromises
+                });
+            }
+        }
+
+        function onVowInput(person) {
+            const val = document.getElementById(`${person}-custom-vow`).value;
+            if (person === 'groom') {
+                weddingState.groomVow = val;
+            } else {
+                weddingState.brideVow = val;
+            }
+
+            if (typeof window.pushCeremonyUpdate === 'function') {
+                clearTimeout(vowDebounceTimer);
+                vowDebounceTimer = setTimeout(() => {
+                    const payload = person === 'groom'
+                        ? { groomVow: val, lastEditedVowBy: 'groom' }
+                        : { brideVow: val, lastEditedVowBy: 'bride' };
+                    window.pushCeremonyUpdate(payload);
+                }, 220);
+            }
+        }
+
+        function inspireVow(person) {
+            if (person === 'groom') {
+                groomInspirationIdx = (groomInspirationIdx + 1) % groomInspirations.length;
+                const text = groomInspirations[groomInspirationIdx];
+                document.getElementById('groom-custom-vow').value = text;
+                weddingState.groomVow = text;
+                if (typeof window.pushCeremonyUpdate === 'function') {
+                    window.pushCeremonyUpdate({ groomVow: text });
+                }
+            } else {
+                brideInspirationIdx = (brideInspirationIdx + 1) % brideInspirations.length;
+                const text = brideInspirations[brideInspirationIdx];
+                document.getElementById('bride-custom-vow').value = text;
+                weddingState.brideVow = text;
+                if (typeof window.pushCeremonyUpdate === 'function') {
+                    window.pushCeremonyUpdate({ brideVow: text });
+                }
+            }
+            playRomanticChime('soft');
+        }
+
+        // ==========================================
+        // 4. NAVEGACIÓN ENTRE PASOS (SINCRONIZADA)
+        // ==========================================
+        function startCeremony() {
+            playRomanticChime('accept');
+            goToStep(2, true);
+        }
+
+        function goToStep(stepNum, broadcast = false) {
+            weddingState.currentStep = stepNum;
+
+            for (let i = 1; i <= 5; i++) {
+                const sec = document.getElementById(`step-${i}`);
+                const tab = document.getElementById(`step-tab-${i}`);
+                if (i === stepNum) {
+                    sec.classList.remove('hidden');
+                    if (tab) {
+                        tab.className = "px-2.5 py-1 rounded-full transition-all flex items-center gap-1 bg-burgundy text-white shadow-sm";
+                    }
+                } else {
+                    sec.classList.add('hidden');
+                    if (tab) {
+                        tab.className = "px-2.5 py-1 rounded-full transition-all flex items-center gap-1 text-charcoal/70 hover:bg-blush";
+                    }
+                }
+            }
+
+            const stepTitles = [
+                "Paso 1 de 5: Altar Virtual",
+                "Paso 2 de 5: Promesas y Votos",
+                "Paso 3 de 5: ¡Sí, Acepto!",
+                "Paso 4 de 5: Firmas de Amor",
+                "Paso 5 de 5: Certificado Oficial"
+            ];
+            document.getElementById('mobile-step-text').textContent = stepTitles[stepNum - 1];
+            document.getElementById('mobile-progress-bar').style.width = `${stepNum * 20}%`;
+
+            if (stepNum === 4) {
+                setTimeout(() => {
+                    resizeSignaturePads();
+                }, 60);
+            }
+
+            if (stepNum === 5) {
+                populateCertificate();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const followChecked = document.getElementById('follow-step-toggle')?.checked;
+            if (broadcast && followChecked && typeof window.pushCeremonyUpdate === 'function') {
+                window.pushCeremonyUpdate({ currentStep: stepNum });
+            }
+        }
+
+        // ==========================================
+        // 5. INTERACCIÓN DEL "SÍ, ACEPTO" EN VIVO
+        // ==========================================
+        function escapeButton(btnId, msgId) {
+            const btn = document.getElementById(btnId);
+            const msgEl = document.getElementById(msgId);
+            if (!btn) return;
+
+            const randomX = (Math.random() - 0.5) * 160;
+            const randomY = (Math.random() - 0.5) * 55;
+            const randomRot = (Math.random() - 0.5) * 20;
+
+            btn.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRot}deg)`;
+
+            const randomPhrase = playfulEscapeMessages[Math.floor(Math.random() * playfulEscapeMessages.length)];
+            if (msgEl) msgEl.textContent = randomPhrase;
+        }
+
+        function acceptProposal(person, fromRemote = false) {
+            if (!fromRemote) {
+                playRomanticChime('accept');
+            }
+
+            if (person === 'groom') {
+                weddingState.groomAccepted = true;
+            } else {
+                weddingState.brideAccepted = true;
+            }
+
+            renderAcceptanceCardsUI();
+            updateRingsVisual();
+
+            if (!fromRemote && typeof window.pushCeremonyUpdate === 'function') {
+                const payload = person === 'groom'
+                    ? { groomAccepted: true }
+                    : { brideAccepted: true };
+                window.pushCeremonyUpdate(payload);
+            }
+        }
+
+        function renderAcceptanceCardsUI() {
+            // UI de Rey Arturo
+            const btnGroom = document.getElementById('btn-yes-groom');
+            const noGroom = document.getElementById('btn-no-groom');
+            const msgGroom = document.getElementById('msg-escape-groom');
+            const badgeGroom = document.getElementById('badge-groom-status');
+            const cardGroom = document.getElementById('card-accept-groom');
+
+            if (weddingState.groomAccepted) {
+                btnGroom.innerHTML = `<span>¡Sí, acepto por siempre! 💍❤️</span>`;
+                btnGroom.classList.add('ring-4', 'ring-champagne');
+                noGroom.classList.add('hidden');
+                msgGroom.textContent = "¡Respuesta sellada con amor!";
+                badgeGroom.innerHTML = `<span class="text-burgundy font-bold">✓ ¡Aceptó en vivo!</span>`;
+                cardGroom.classList.add('border-champagne', 'bg-blush/30');
+            } else {
+                btnGroom.innerHTML = `<span>¡Sí, acepto casarme contigo! ❤️</span>`;
+                btnGroom.classList.remove('ring-4', 'ring-champagne');
+                noGroom.classList.remove('hidden');
+                msgGroom.textContent = "";
+                badgeGroom.textContent = "Pendiente de responder";
+                cardGroom.classList.remove('border-champagne', 'bg-blush/30');
+            }
+
+            // UI de Leslie Lisbeth
+            const btnBride = document.getElementById('btn-yes-bride');
+            const noBride = document.getElementById('btn-no-bride');
+            const msgBride = document.getElementById('msg-escape-bride');
+            const badgeBride = document.getElementById('badge-bride-status');
+            const cardBride = document.getElementById('card-accept-bride');
+
+            if (weddingState.brideAccepted) {
+                btnBride.innerHTML = `<span>¡Sí, acepto por siempre! 💍❤️</span>`;
+                btnBride.classList.add('ring-4', 'ring-champagne');
+                noBride.classList.add('hidden');
+                msgBride.textContent = "¡Respuesta sellada con amor!";
+                badgeBride.innerHTML = `<span class="text-burgundy font-bold">✓ ¡Aceptó en vivo!</span>`;
+                cardBride.classList.add('border-champagne', 'bg-blush/30');
+            } else {
+                btnBride.innerHTML = `<span>¡Sí, acepto casarme contigo! ❤️</span>`;
+                btnBride.classList.remove('ring-4', 'ring-champagne');
+                noBride.classList.remove('hidden');
+                msgBride.textContent = "";
+                badgeBride.textContent = "Pendiente de responder";
+                cardBride.classList.remove('border-champagne', 'bg-blush/30');
+            }
+        }
+
+        function updateRingsVisual() {
+            const ringGroom = document.getElementById('ring-visual-groom');
+            const ringBride = document.getElementById('ring-visual-bride');
+            const statusText = document.getElementById('rings-status-text');
+            const sparkleBadge = document.getElementById('rings-sparkle-badge');
+            const bothBanner = document.getElementById('both-accepted-banner');
+
+            if (weddingState.groomAccepted && !weddingState.brideAccepted) {
+                ringGroom.className = "transition-all duration-700 transform -translate-x-4 opacity-100";
+                ringBride.className = "transition-all duration-700 transform translate-x-8 opacity-60";
+                sparkleBadge.classList.add('hidden');
+                bothBanner.classList.add('hidden');
+                statusText.textContent = `${getShortName(weddingState.groomName)} ha dicho ¡Sí! Esperando en vivo a ${getShortName(weddingState.brideName)} ❤️`;
+            } else if (!weddingState.groomAccepted && weddingState.brideAccepted) {
+                ringGroom.className = "transition-all duration-700 transform -translate-x-8 opacity-60";
+                ringBride.className = "transition-all duration-700 transform translate-x-4 opacity-100";
+                sparkleBadge.classList.add('hidden');
+                bothBanner.classList.add('hidden');
+                statusText.textContent = `${getShortName(weddingState.brideName)} ha dicho ¡Sí! Esperando en vivo a ${getShortName(weddingState.groomName)} ❤️`;
+            } else if (weddingState.groomAccepted && weddingState.brideAccepted) {
+                ringGroom.className = "ring-left-united";
+                ringBride.className = "ring-right-united";
+                sparkleBadge.classList.remove('hidden');
+                bothBanner.classList.remove('hidden');
+                statusText.textContent = "¡Anillos entrelazados en tiempo real! Ambos han aceptado unir sus vidas simbólicamente.";
+                triggerHeartConfettiBurst();
+            } else {
+                ringGroom.className = "transition-all duration-700 transform -translate-x-8 opacity-60";
+                ringBride.className = "transition-all duration-700 transform translate-x-8 opacity-60";
+                sparkleBadge.classList.add('hidden');
+                bothBanner.classList.add('hidden');
+                statusText.textContent = 'Esperando el "Sí, Acepto" de ambos novios...';
+            }
+        }
+
+        function resetAcceptancesForReplay() {
+            weddingState.groomAccepted = false;
+            weddingState.brideAccepted = false;
+            renderAcceptanceCardsUI();
+            updateRingsVisual();
+            if (typeof window.pushCeremonyUpdate === 'function') {
+                window.pushCeremonyUpdate({
+                    groomAccepted: false,
+                    brideAccepted: false,
+                    currentStep: 3
+                });
+            }
+            goToStep(3, false);
+            showToast("¡Listo para volver a vivir la emoción del 'Sí, Acepto' juntos! 💍");
+        }
+
+        function proceedFromAcceptStep() {
+            if (!weddingState.groomAccepted || !weddingState.brideAccepted) {
+                weddingState.groomAccepted = true;
+                weddingState.brideAccepted = true;
+                renderAcceptanceCardsUI();
+                updateRingsVisual();
+                if (typeof window.pushCeremonyUpdate === 'function') {
+                    window.pushCeremonyUpdate({ groomAccepted: true, brideAccepted: true });
+                }
+                showToast("¡Sellamos el 'Sí, Acepto' de ambos para pasar a las firmas! 💍");
+            }
+            goToStep(4, true);
+        }
+
+        // ==========================================
+        // 6. LIENZOS DE FIRMA SINCRONIZADOS (CANVAS)
+        // ==========================================
+        const signaturePads = {
+            groom: { canvas: null, ctx: null, drawing: false, hasStrokes: false, manualStarted: false },
+            bride: { canvas: null, ctx: null, drawing: false, hasStrokes: false, manualStarted: false }
+        };
+
+        function initSignaturePads() {
+            ['groom', 'bride'].forEach(person => {
+                const canvas = document.getElementById(`canvas-${person}`);
+                const ctx = canvas.getContext('2d');
+                signaturePads[person].canvas = canvas;
+                signaturePads[person].ctx = ctx;
+
+                // Eventos de Ratón
+                canvas.addEventListener('mousedown', e => startDrawing(person, e));
+                canvas.addEventListener('mousemove', e => drawStroke(person, e));
+                window.addEventListener('mouseup', () => stopDrawing(person));
+
+                // Eventos Táctiles
+                canvas.addEventListener('touchstart', e => {
+                    e.preventDefault();
+                    startDrawing(person, e.touches[0]);
+                }, { passive: false });
+                canvas.addEventListener('touchmove', e => {
+                    e.preventDefault();
+                    drawStroke(person, e.touches[0]);
+                }, { passive: false });
+                canvas.addEventListener('touchend', () => stopDrawing(person));
+            });
+        }
+
+        function resizeSignaturePads() {
+            ['groom', 'bride'].forEach(person => {
+                const pad = signaturePads[person];
+                if (!pad.canvas) return;
+                const rect = pad.canvas.getBoundingClientRect();
+                if (rect.width === 0) return;
+
+                const savedDataUrl = person === 'groom' ? weddingState.groomSigData : weddingState.brideSigData;
+
+                pad.canvas.width = rect.width;
+                pad.canvas.height = rect.height;
+
+                pad.ctx.strokeStyle = '#6E1E2A';
+                pad.ctx.lineWidth = 2.6;
+                pad.ctx.lineCap = 'round';
+                pad.ctx.lineJoin = 'round';
+
+                if (savedDataUrl) {
+                    drawDataUrlOnPad(person, savedDataUrl);
+                } else {
+                    autoScriptSignature(person, true);
+                }
+            });
+        }
+
+        function drawDataUrlOnPad(person, dataUrl) {
+            const pad = signaturePads[person];
+            if (!pad.canvas || !dataUrl) return;
+            const img = new Image();
+            img.onload = () => {
+                pad.ctx.clearRect(0, 0, pad.canvas.width, pad.canvas.height);
+                pad.ctx.drawImage(img, 0, 0, pad.canvas.width, pad.canvas.height);
+                pad.hasStrokes = true;
+            };
+            img.src = dataUrl;
+        }
+
+        function getCanvasCoords(canvas, event) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top
+            };
+        }
+
+        function startDrawing(person, event) {
+            const pad = signaturePads[person];
+            if (!pad.manualStarted) {
+                pad.ctx.clearRect(0, 0, pad.canvas.width, pad.canvas.height);
+                pad.manualStarted = true;
+            }
+            pad.drawing = true;
+            pad.hasStrokes = true;
+            const pos = getCanvasCoords(pad.canvas, event);
+            pad.ctx.beginPath();
+            pad.ctx.moveTo(pos.x, pos.y);
+        }
+
+        function drawStroke(person, event) {
+            const pad = signaturePads[person];
+            if (!pad.drawing) return;
+            const pos = getCanvasCoords(pad.canvas, event);
+            pad.ctx.lineTo(pos.x, pos.y);
+            pad.ctx.stroke();
+        }
+
+        function stopDrawing(person) {
+            const pad = signaturePads[person];
+            if (!pad.drawing) return;
+            pad.drawing = false;
+            saveAndSyncSignature(person);
+        }
+
+        function saveAndSyncSignature(person) {
+            const pad = signaturePads[person];
+            if (!pad.canvas || pad.canvas.width === 0) return;
+            const dataUrl = pad.canvas.toDataURL('image/png');
+            if (person === 'groom') {
+                weddingState.groomSigData = dataUrl;
+                if (typeof window.pushCeremonyUpdate === 'function') {
+                    window.pushCeremonyUpdate({ groomSigData: dataUrl });
+                }
+            } else {
+                weddingState.brideSigData = dataUrl;
+                if (typeof window.pushCeremonyUpdate === 'function') {
+                    window.pushCeremonyUpdate({ brideSigData: dataUrl });
+                }
+            }
+        }
+
+        function clearSignature(person) {
+            const pad = signaturePads[person];
+            pad.ctx.clearRect(0, 0, pad.canvas.width, pad.canvas.height);
+            pad.hasStrokes = false;
+            pad.manualStarted = true;
+            if (person === 'groom') {
+                weddingState.groomSigData = "";
+                if (typeof window.pushCeremonyUpdate === 'function') {
+                    window.pushCeremonyUpdate({ groomSigData: "" });
+                }
+            } else {
+                weddingState.brideSigData = "";
+                if (typeof window.pushCeremonyUpdate === 'function') {
+                    window.pushCeremonyUpdate({ brideSigData: "" });
+                }
+            }
+        }
+
+        function autoScriptSignature(person, isInitial = false) {
+            const pad = signaturePads[person];
+            if (!pad.canvas || pad.canvas.width === 0) return;
+
+            pad.ctx.clearRect(0, 0, pad.canvas.width, pad.canvas.height);
+            const name = person === 'groom' ? getShortName(weddingState.groomName) : getShortName(weddingState.brideName);
+
+            pad.ctx.save();
+            pad.ctx.font = '38px "Great Vibes", cursive';
+            pad.ctx.fillStyle = '#6E1E2A';
+            pad.ctx.textAlign = 'center';
+            pad.ctx.textBaseline = 'middle';
+            pad.ctx.fillText(`${name} ♥`, pad.canvas.width / 2, pad.canvas.height / 2);
+
+            pad.ctx.beginPath();
+            pad.ctx.strokeStyle = '#D4AF37';
+            pad.ctx.lineWidth = 1.5;
+            const cx = pad.canvas.width / 2;
+            const cy = (pad.canvas.height / 2) + 22;
+            pad.ctx.moveTo(cx - 65, cy);
+            pad.ctx.quadraticCurveTo(cx, cy + 10, cx + 65, cy - 4);
+            pad.ctx.stroke();
+            pad.ctx.restore();
+
+            pad.hasStrokes = true;
+            pad.manualStarted = !isInitial;
+            if (!isInitial) {
+                playRomanticChime('soft');
+                saveAndSyncSignature(person);
+            }
+        }
+
+        // ==========================================
+        // 7. GENERACIÓN DEL CERTIFICADO Y CONFETI
+        // ==========================================
+        function declareOfficialSpouses() {
+            const nowTs = Date.now();
+            weddingState.lastCelebrationTs = nowTs;
+            playRomanticChime('wedding');
+            goToStep(5, true);
+            triggerHeartConfettiBurst();
+            showToast("¡Los declaro oficialmente Esposos Simbólicos! Que viva el amor ❤️🥂");
+
+            if (typeof window.pushCeremonyUpdate === 'function') {
+                window.pushCeremonyUpdate({
+                    currentStep: 5,
+                    lastCelebrationTs: nowTs
+                });
+            }
+        }
+
+        function populateCertificate() {
+            updateDOMNamesAndLabels();
+
+            document.getElementById('cert-groom-name').textContent = weddingState.groomName;
+            document.getElementById('cert-bride-name').textContent = weddingState.brideName;
+            document.getElementById('cert-date').textContent = formatSpanishDate(weddingState.weddingDate);
+            document.getElementById('cert-location').textContent = weddingState.weddingLocation;
+
+            // Llenar promesas de Él
+            const groomUl = document.getElementById('cert-groom-promises');
+            groomUl.innerHTML = '';
+            const groomSelected = weddingState.groomPromises.length > 0 ? weddingState.groomPromises : [0, 2];
+            groomSelected.forEach(idx => {
+                if (romanticPromisesCatalog[idx]) {
+                    const li = document.createElement('li');
+                    li.textContent = romanticPromisesCatalog[idx];
+                    groomUl.appendChild(li);
+                }
+            });
+
+            // Llenar promesas de Ella
+            const brideUl = document.getElementById('cert-bride-promises');
+            brideUl.innerHTML = '';
+            const brideSelected = weddingState.bridePromises.length > 0 ? weddingState.bridePromises : [1, 3];
+            brideSelected.forEach(idx => {
+                if (romanticPromisesCatalog[idx]) {
+                    const li = document.createElement('li');
+                    li.textContent = romanticPromisesCatalog[idx];
+                    brideUl.appendChild(li);
+                }
+            });
+
+            // Votos escritos
+            const groomVow = document.getElementById('groom-custom-vow').value.trim();
+            const brideVow = document.getElementById('bride-custom-vow').value.trim();
+            document.getElementById('cert-groom-vow').textContent = `"${groomVow}"`;
+            document.getElementById('cert-bride-vow').textContent = `"${brideVow}"`;
+
+            // Pasar firmas sincronizadas o locales a imagen
+            ['groom', 'bride'].forEach(person => {
+                const pad = signaturePads[person];
+                const imgEl = document.getElementById(`cert-sig-${person}`);
+                const syncedData = person === 'groom' ? weddingState.groomSigData : weddingState.brideSigData;
+
+                if (syncedData) {
+                    imgEl.src = syncedData;
+                } else if (pad.canvas && pad.hasStrokes && pad.canvas.width > 0) {
+                    imgEl.src = pad.canvas.toDataURL('image/png');
+                } else {
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = 320;
+                    tempCanvas.height = 110;
+                    const tCtx = tempCanvas.getContext('2d');
+                    const name = person === 'groom' ? getShortName(weddingState.groomName) : getShortName(weddingState.brideName);
+                    tCtx.font = '36px "Great Vibes", cursive';
+                    tCtx.fillStyle = '#6E1E2A';
+                    tCtx.textAlign = 'center';
+                    tCtx.textBaseline = 'middle';
+                    tCtx.fillText(`${name} ♥`, 160, 55);
+                    imgEl.src = tempCanvas.toDataURL('image/png');
+                }
+            });
+        }
+
+        async function downloadCertificateImage() {
+            const certEl = document.getElementById('certificate-wrapper');
+            const btn = document.getElementById('btn-download-cert');
+            if (!certEl || typeof html2canvas === 'undefined') {
+                window.print();
+                return;
+            }
+            try {
+                btn.innerHTML = `<span>⏳</span> <span>Generando recuerdo...</span>`;
+                const canvas = await html2canvas(certEl, {
+                    scale: 2,
+                    backgroundColor: '#FDFBF7',
+                    useCORS: true
+                });
+                const link = document.createElement('a');
+                link.download = `Certificado_Boda_Simbolica_Rey_Arturo_y_Leslie_Lisbeth.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                btn.innerHTML = `<span>📸</span> <span>Guardar como Imagen</span>`;
+                showToast("¡Certificado descargado como imagen en tu dispositivo! 💖");
+            } catch (e) {
+                btn.innerHTML = `<span>📸</span> <span>Guardar como Imagen</span>`;
+                window.print();
+            }
+        }
+
+        let toastTimeout = null;
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            const msg = document.getElementById('toast-message');
+            msg.textContent = message;
+            toast.classList.remove('hidden');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4200);
+        }
+
+        // ==========================================
+        // 8. ANIMACIÓN DE PÉTALOS Y DESTELLOS EN FONDO
+        // ==========================================
+        function initPetalsBackground() {
+            const canvas = document.getElementById('petals-canvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const particles = [];
+            const count = 32;
+
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 7 + 5,
+                    speedY: Math.random() * 0.6 + 0.3,
+                    speedX: (Math.random() - 0.5) * 0.5,
+                    angle: Math.random() * Math.PI * 2,
+                    spin: (Math.random() - 0.5) * 0.015,
+                    isGold: Math.random() > 0.65
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX + Math.sin(p.angle) * 0.3;
+                    p.angle += p.spin;
+
+                    if (p.y > height + 20) {
+                        p.y = -20;
+                        p.x = Math.random() * width;
+                    }
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.angle);
+
+                    if (p.isGold) {
+                        ctx.fillStyle = 'rgba(212, 175, 55, 0.38)';
+                        ctx.beginPath();
+                        ctx.arc(0, 0, p.size * 0.35, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else {
+                        ctx.fillStyle = 'rgba(232, 197, 208, 0.55)';
+                        ctx.beginPath();
+                        ctx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                });
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ==========================================
+        // 9. EXPLOSIÓN DE CONFETI DE CORAZONES Y ORO
+        // ==========================================
+        let confettiParticles = [];
+        let confettiAnimating = false;
+
+        function triggerHeartConfettiBurst() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const colors = ['#6E1E2A', '#D4AF37', '#E8C5D0', '#F3E5AB', '#C94A63'];
+
+            for (let i = 0; i < 95; i++) {
+                confettiParticles.push({
+                    x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+                    y: canvas.height * 0.45,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 0.9) * 14 - 3,
+                    size: Math.random() * 10 + 7,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    vRot: (Math.random() - 0.5) * 8,
+                    isHeart: Math.random() > 0.35,
+                    alpha: 1
+                });
+            }
+
+            if (!confettiAnimating) {
+                confettiAnimating = true;
+                animateConfetti(canvas, ctx);
+            }
+        }
+
+        function animateConfetti(canvas, ctx) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            confettiParticles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.25;
+                p.rotation += p.vRot;
+                p.alpha -= 0.006;
+
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, p.alpha);
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.fillStyle = p.color;
+
+                if (p.isHeart) {
+                    const s = p.size * 0.08;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 3 * s);
+                    ctx.bezierCurveTo(0, 0, -5 * s, 0, -5 * s, 3 * s);
+                    ctx.bezierCurveTo(-5 * s, 6 * s, 0, 8 * s, 0, 11 * s);
+                    ctx.bezierCurveTo(0, 8 * s, 5 * s, 6 * s, 5 * s, 3 * s);
+                    ctx.bezierCurveTo(5 * s, 0, 0, 0, 0, 3 * s);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.6);
+                }
+                ctx.restore();
+            });
+
+            confettiParticles = confettiParticles.filter(p => p.alpha > 0 && p.y < canvas.height + 40);
+
+            if (confettiParticles.length > 0) {
+                requestAnimationFrame(() => animateConfetti(canvas, ctx));
+            } else {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                confettiAnimating = false;
+            }
+        }
+
+        window.onload = initializeWeddingUI;
+    </script>
+
+    <!-- ==========================================
+         SINCRONIZACIÓN EN TIEMPO REAL CON FIREBASE (DIRECTA SIN LOGIN)
+         ========================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let db = null;
+        let unsubscribeRoom = null;
+        // Identificador único de sesión sin requerir Auth de Firebase
+        const sessionUid = "novios-" + Math.random().toString(36).substring(2, 8);
+
+        function setConnectionStatusUI(status, text) {
+            const pill = document.getElementById('sync-status-pill');
+            const dot = document.getElementById('sync-dot');
+            const label = document.getElementById('sync-status-text');
+            if (!pill || !dot || !label) return;
+
+            label.textContent = text;
+            if (status === 'connected') {
+                pill.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-800 font-medium";
+                dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+            } else if (status === 'local') {
+                pill.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blush border border-champagne text-burgundy font-medium";
+                dot.className = "w-2 h-2 rounded-full bg-burgundy";
+            }
+        }
+
+        // Conectado directamente a tu base de datos "amor-4ffa5" que ya tiene las Reglas listas
+        const myFirebaseConfig = {
+            apiKey: "AIzaSyCrVVFYrZjDdpJ92ogSTqLMZ4gvzRfTFCM",
+            authDomain: "amor-4ffa5.firebaseapp.com",
+            projectId: "amor-4ffa5",
+            storageBucket: "amor-4ffa5.firebasestorage.app",
+            messagingSenderId: "259203745864",
+            appId: "1:259203745864:web:ea83d13e7bcf412c56f07d",
+            measurementId: "G-S5YC08S136"
+        };
+
+        async function initRealtimeCeremony() {
+            try {
+                const app = initializeApp(myFirebaseConfig);
+                db = getFirestore(app);
+
+                const uidDisplay = document.getElementById('user-uid-display');
+                if (uidDisplay) {
+                    uidDisplay.textContent = sessionUid;
+                }
+
+                subscribeToCeremonyRoom(weddingState.roomCode);
+            } catch (err) {
+                console.error("Error iniciando sincronización en tiempo real:", err);
+                setConnectionStatusUI('local', 'Modo Romántico Local ✨');
+            }
+        }
+
+        function getCeremonyDocRef(roomCode) {
+            // Se guarda en su propia colección 'bodaSimbolica' sin mezclarse con la app de Terius
+            return doc(db, 'bodaSimbolica', roomCode);
+        }
+
+        function subscribeToCeremonyRoom(roomCode) {
+            if (!db) return;
+            if (unsubscribeRoom) {
+                unsubscribeRoom();
+            }
+
+            const roomRef = getCeremonyDocRef(roomCode);
+
+            unsubscribeRoom = onSnapshot(
+                roomRef,
+                (snapshot) => {
+                    setConnectionStatusUI('connected', '🟢 Conectados en el altar en tiempo real');
+
+                    if (!snapshot.exists()) {
+                        window.pushCeremonyUpdate({
+                            groomName: weddingState.groomName,
+                            brideName: weddingState.brideName,
+                            weddingDate: weddingState.weddingDate,
+                            weddingLocation: weddingState.weddingLocation,
+                            groomPromises: weddingState.groomPromises,
+                            bridePromises: weddingState.bridePromises,
+                            groomVow: weddingState.groomVow,
+                            brideVow: weddingState.brideVow,
+                            groomAccepted: weddingState.groomAccepted,
+                            brideAccepted: weddingState.brideAccepted,
+                            currentStep: weddingState.currentStep
+                        });
+                        return;
+                    }
+
+                    const data = snapshot.data();
+                    applyRemoteState(data);
+                },
+                (error) => {
+                    console.error("Error en suscripción de sala:", error);
+                    setConnectionStatusUI('local', 'Conexión local activa');
+                }
+            );
+        }
+
+        function applyRemoteState(data) {
+            if (!data) return;
+
+            const activeEl = document.activeElement;
+            if (typeof data.groomName === 'string' && activeEl?.id !== 'input-groom') {
+                weddingState.groomName = data.groomName;
+                document.getElementById('input-groom').value = data.groomName;
+            }
+            if (typeof data.brideName === 'string' && activeEl?.id !== 'input-bride') {
+                weddingState.brideName = data.brideName;
+                document.getElementById('input-bride').value = data.brideName;
+            }
+            if (typeof data.weddingDate === 'string' && activeEl?.id !== 'input-date') {
+                weddingState.weddingDate = data.weddingDate;
+                document.getElementById('input-date').value = data.weddingDate;
+            }
+            if (typeof data.weddingLocation === 'string' && activeEl?.id !== 'input-location') {
+                weddingState.weddingLocation = data.weddingLocation;
+                document.getElementById('input-location').value = data.weddingLocation;
+            }
+            updateDOMNamesAndLabels();
+
+            if (Array.isArray(data.groomPromises) || Array.isArray(data.bridePromises)) {
+                if (Array.isArray(data.groomPromises)) weddingState.groomPromises = data.groomPromises;
+                if (Array.isArray(data.bridePromises)) weddingState.bridePromises = data.bridePromises;
+                renderPromisesChecklists();
+            }
+
+            if (typeof data.groomVow === 'string' && activeEl?.id !== 'groom-custom-vow') {
+                if (weddingState.groomVow !== data.groomVow) {
+                    weddingState.groomVow = data.groomVow;
+                    document.getElementById('groom-custom-vow').value = data.groomVow;
+                    flashTypingIndicator('groom');
+                }
+            }
+            if (typeof data.brideVow === 'string' && activeEl?.id !== 'bride-custom-vow') {
+                if (weddingState.brideVow !== data.brideVow) {
+                    weddingState.brideVow = data.brideVow;
+                    document.getElementById('bride-custom-vow').value = data.brideVow;
+                    flashTypingIndicator('bride');
+                }
+            }
+
+            const prevBothAccepted = weddingState.groomAccepted && weddingState.brideAccepted;
+            let acceptanceChanged = false;
+
+            if (typeof data.groomAccepted === 'boolean' && data.groomAccepted !== weddingState.groomAccepted) {
+                weddingState.groomAccepted = data.groomAccepted;
+                acceptanceChanged = true;
+                if (data.groomAccepted) {
+                    playRomanticChime('accept');
+                    showToast(`💍 ¡${getShortName(weddingState.groomName)} acaba de decir "Sí, Acepto"!`);
+                }
+            }
+            if (typeof data.brideAccepted === 'boolean' && data.brideAccepted !== weddingState.brideAccepted) {
+                weddingState.brideAccepted = data.brideAccepted;
+                acceptanceChanged = true;
+                if (data.brideAccepted) {
+                    playRomanticChime('accept');
+                    showToast(`💍 ¡${getShortName(weddingState.brideName)} acaba de decir "Sí, Acepto"!`);
+                }
+            }
+
+            if (acceptanceChanged) {
+                renderAcceptanceCardsUI();
+                updateRingsVisual();
+                const nowBothAccepted = weddingState.groomAccepted && weddingState.brideAccepted;
+                if (!prevBothAccepted && nowBothAccepted) {
+                    playRomanticChime('wedding');
+                }
+            }
+
+            if (typeof data.groomSigData === 'string' && data.groomSigData !== weddingState.groomSigData) {
+                weddingState.groomSigData = data.groomSigData;
+                if (!signaturePads.groom.drawing) {
+                    if (data.groomSigData) {
+                        drawDataUrlOnPad('groom', data.groomSigData);
+                    } else if (signaturePads.groom.ctx && signaturePads.groom.canvas) {
+                        signaturePads.groom.ctx.clearRect(0, 0, signaturePads.groom.canvas.width, signaturePads.groom.canvas.height);
+                    }
+                }
+            }
+            if (typeof data.brideSigData === 'string' && data.brideSigData !== weddingState.brideSigData) {
+                weddingState.brideSigData = data.brideSigData;
+                if (!signaturePads.bride.drawing) {
+                    if (data.brideSigData) {
+                        drawDataUrlOnPad('bride', data.brideSigData);
+                    } else if (signaturePads.bride.ctx && signaturePads.bride.canvas) {
+                        signaturePads.bride.ctx.clearRect(0, 0, signaturePads.bride.canvas.width, signaturePads.bride.canvas.height);
+                    }
+                }
+            }
+
+            if (typeof data.lastHeartbeatTs === 'number' && data.lastHeartbeatTs > weddingState.lastHeartbeatTs) {
+                const isFirstLoad = weddingState.lastHeartbeatTs === 0;
+                weddingState.lastHeartbeatTs = data.lastHeartbeatTs;
+                if (!isFirstLoad) {
+                    triggerHeartConfettiBurst();
+                    playRomanticChime('heartbeat');
+                    const sender = data.lastHeartbeatFrom || "Tu amor";
+                    showToast(`💌 ¡${sender} te acaba de enviar un beso y lluvia de corazones en vivo!`);
+                }
+            }
+
+            if (typeof data.lastCelebrationTs === 'number' && data.lastCelebrationTs > weddingState.lastCelebrationTs) {
+                const isFirstLoad = weddingState.lastCelebrationTs === 0;
+                weddingState.lastCelebrationTs = data.lastCelebrationTs;
+                if (!isFirstLoad) {
+                    triggerHeartConfettiBurst();
+                    playRomanticChime('wedding');
+                }
+            }
+
+            const followChecked = document.getElementById('follow-step-toggle')?.checked;
+            if (followChecked && typeof data.currentStep === 'number' && data.currentStep !== weddingState.currentStep) {
+                goToStep(data.currentStep, false);
+            }
+
+            if (weddingState.currentStep === 5) {
+                populateCertificate();
+            }
+        }
+
+        let groomTypingTimer = null;
+        let brideTypingTimer = null;
+        function flashTypingIndicator(person) {
+            const el = document.getElementById(`${person}-typing-indicator`);
+            if (!el) return;
+            const name = person === 'groom' ? getShortName(weddingState.groomName) : getShortName(weddingState.brideName);
+            el.textContent = `✨ ${name} está escribiendo sus votos en vivo...`;
+            if (person === 'groom') {
+                clearTimeout(groomTypingTimer);
+                groomTypingTimer = setTimeout(() => { el.textContent = ''; }, 2200);
+            } else {
+                clearTimeout(brideTypingTimer);
+                brideTypingTimer = setTimeout(() => { el.textContent = ''; }, 2200);
+            }
+        }
+
+        window.pushCeremonyUpdate = async function(partialData) {
+            if (!db) return;
+            try {
+                const roomRef = getCeremonyDocRef(weddingState.roomCode);
+                await setDoc(roomRef, {
+                    ...partialData,
+                    updatedAt: Date.now(),
+                    updatedByUid: sessionUid
+                }, { merge: true });
+            } catch (e) {
+                console.error("Error guardando cambios en vivo:", e);
+            }
+        };
+
+        window.reconnectCeremonyRoom = function(newRoomCode) {
+            subscribeToCeremonyRoom(newRoomCode);
+        };
+
+        initRealtimeCeremony();
+    </script>
+</body>
+</html>
